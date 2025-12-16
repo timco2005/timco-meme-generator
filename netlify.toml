@@ -5,13 +5,7 @@
   publish = ".next"
 
 [build.environment]
-  NODE_VERSION = "18"
-
-# Redirect all requests to index.html for Next.js routing
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+  NODE_VERSION = "20"
 
 # Headers for security and performance
 [[headers]]
