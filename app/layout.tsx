@@ -1,10 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import dynamic from 'next/dynamic';
-
-const Navigation = dynamic(() => import('@/components/Navigation'), {
-  ssr: false,
-});
+import Navigation from '@/components/Navigation';
 
 export const metadata: Metadata = {
   title: 'TIMCO CREATIVE GROUP - Meme Generator',

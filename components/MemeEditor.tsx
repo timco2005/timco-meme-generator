@@ -226,6 +226,12 @@ export default function MemeEditor({ userId }: MemeEditorProps) {
       return;
     }
 
+    if (!userId) {
+      alert('You must be logged in to post memes. Please log in and try again.');
+      router.push('/login');
+      return;
+    }
+
     setIsPosting(true);
     try {
       // Wait a moment to ensure DOM is ready
@@ -234,24 +240,35 @@ export default function MemeEditor({ userId }: MemeEditorProps) {
       const base64Image = await renderToCanvas();
       
       if (!base64Image) {
-        throw new Error('Failed to generate image');
+        throw new Error('Failed to generate image. Please try again.');
       }
 
-      db.transact(
-        db.tx.memes[id()].update({
-          imageUrl: base64Image,
-          createdAt: Date.now(),
-          userId,
-        })
-      );
+      // Validate base64 image size (InstantDB has limits)
+      if (base64Image.length > 10 * 1024 * 1024) { // 10MB limit
+        throw new Error('Image is too large. Please use a smaller image.');
+      }
 
-      // Wait a bit for the transaction to complete
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      router.push('/feed');
+      try {
+        db.transact(
+          db.tx.memes[id()].update({
+            imageUrl: base64Image,
+            createdAt: Date.now(),
+            userId,
+          })
+        );
+
+        // Wait a bit for the transaction to complete
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        router.push('/feed');
+      } catch (transactError: any) {
+        const errorMessage = transactError?.message || transactError?.body?.message || 'Failed to save meme';
+        throw new Error(`Database error: ${errorMessage}. Please check your connection and try again.`);
+      }
     } catch (error: any) {
       console.error('Error posting meme:', error);
-      alert(`Error posting meme: ${error.message || 'Please try again.'}`);
+      const userMessage = error.message || 'An unexpected error occurred. Please try again.';
+      alert(`Error posting meme: ${userMessage}`);
     } finally {
       setIsPosting(false);
     }
