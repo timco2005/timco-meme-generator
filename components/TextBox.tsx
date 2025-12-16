@@ -9,7 +9,7 @@ interface TextBoxProps {
   onSelect: () => void;
   onUpdate: (updates: Partial<TextBoxData>) => void;
   onDrag: (x: number, y: number) => void;
-  containerRef: React.RefObject<HTMLDivElement>;
+  containerRef: React.RefObject<HTMLDivElement | null>;
 }
 
 export default function TextBox({
