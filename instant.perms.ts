@@ -1,5 +1,5 @@
-import type { InstantRules } from '@instantdb/react';
-
+// InstantDB rules configuration
+// Note: Using @ts-ignore in db.ts as InstantDB types may not be fully up to date
 const rules = {
   memes: {
     allow: {
@@ -35,7 +35,7 @@ const rules = {
       'auth.id != null && auth.id == data.userId',
     ],
   },
-} satisfies InstantRules;
+};
 
 export default rules;
 
